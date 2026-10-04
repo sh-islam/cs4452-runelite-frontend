@@ -55,6 +55,15 @@
       <pre class="log" id="log"></pre>
     </div>
 
+    <div class="card">
+      <h2>Admin password</h2>
+      <form id="password" class="row">
+        <input name="current" type="password" placeholder="current" autocomplete="current-password" required>
+        <input name="new" type="password" placeholder="new (8+ characters)" autocomplete="new-password" required>
+        <button class="small">Change</button>
+      </form>
+    </div>
+
     <p class="dim">Logs are kept <span id="retention">3</span> days. <a href="#" id="signout">Sign out</a></p>
   </div>
 </main>
@@ -149,6 +158,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   document.getElementById("filter").addEventListener("submit", async (event) => {
     event.preventDefault(); try { await showLogs(); } catch (e) { notice(e.message); }
+  });
+  document.getElementById("password").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.target);
+    try {
+      await api("/api/admin/password", { method: "POST", kind: "admin", body: { current: form.get("current"), new: form.get("new") } });
+      notice("Admin password changed."); event.target.reset();
+    } catch (e) { notice(e.message); }
   });
   document.getElementById("signout").addEventListener("click", (event) => {
     event.preventDefault(); session.clear("admin"); clearInterval(timer);
