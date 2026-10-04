@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Downloads · CS4452</title>
+<link rel="stylesheet" href="site.css">
+<script src="site.js" defer></script>
+</head>
+<body>
+<header><div class="inner">
+  <a class="brand" href="index.html">CS4452</a>
+  <nav><a href="index.html">Home</a><a href="howto.html">How to use</a><a href="downloads.html">Downloads</a></nav>
+</div></header>
+<main>
+  <div class="card" id="signin">
+    <h1>Downloads</h1>
+    <p>Sign in with the name and password you were given.</p>
+    <form id="login">
+      <label>Name<input name="name" autocomplete="username" required></label>
+      <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+      <button>Sign in</button>
+      <p class="err" id="login-error"></p>
+    </form>
+  </div>
+
+  <div class="card hidden" id="ready">
+    <h1>Downloads</h1>
+    <p>Hi <b id="who"></b>. Current version: <b id="version">…</b></p>
+    <p><button id="get">Download the installer</button></p>
+    <p class="dim">The installer is yours alone: it carries your key. Don't share it. It installs the current
+      version, and updates come by themselves after that.</p>
+    <p class="err" id="get-error"></p>
+    <p class="dim"><a href="#" id="signout">Sign out</a></p>
+  </div>
+
+  <div class="card">
+    <h2>Then</h2>
+    <ol>
+      <li>Close RuneLite, run <b>CS4452-Setup.cmd</b>, press Enter.</li>
+      <li>Open RuneLite as usual.</li>
+    </ol>
+    <p class="dim">Full steps on the <a href="howto.html">How to use</a> page.</p>
+  </div>
+</main>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const signin = document.getElementById("signin");
+  const ready = document.getElementById("ready");
+  const show = (me) => {
+    signin.classList.add("hidden"); ready.classList.remove("hidden");
+    document.getElementById("who").textContent = me.name;
+    document.getElementById("version").textContent = me.version || "not published yet";
+  };
+  if (session.get("friend")) {
+    try { show(await api("/api/me", { kind: "friend" })); } catch (e) {}
+  }
+  document.getElementById("login").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.target);
+    document.getElementById("login-error").textContent = "";
+    try {
+      const r = await api("/api/login", { method: "POST", body: { name: form.get("name"), password: form.get("password") } });
+      session.set("friend", r.token);
+      show(await api("/api/me", { kind: "friend" }));
+    } catch (e) {
+      document.getElementById("login-error").textContent = e.message;
+    }
+  });
+  document.getElementById("get").addEventListener("click", async () => {
+    document.getElementById("get-error").textContent = "";
+    try {
+      const reply = await api("/api/installer", { kind: "friend", raw: true });
+      const blob = await reply.blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "CS4452-Setup.cmd"; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    } catch (e) {
+      document.getElementById("get-error").textContent = e.message;
+      if (!session.get("friend")) { ready.classList.add("hidden"); signin.classList.remove("hidden"); }
+    }
+  });
+  document.getElementById("signout").addEventListener("click", (event) => {
+    event.preventDefault(); session.clear("friend");
+    ready.classList.add("hidden"); signin.classList.remove("hidden");
+  });
+});
+</script>
+</body>
+</html>

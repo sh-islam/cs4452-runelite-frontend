@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin · CS4452</title>
+<link rel="stylesheet" href="site.css">
+<script src="site.js" defer></script>
+</head>
+<body>
+<header><div class="inner">
+  <a class="brand" href="index.html">CS4452</a>
+  <nav><a href="index.html">Home</a><a href="howto.html">How to use</a><a href="downloads.html">Downloads</a><a href="admin.html">Admin</a></nav>
+</div></header>
+<main>
+  <div class="card" id="signin">
+    <h1>Admin</h1>
+    <form id="login">
+      <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+      <button>Sign in</button>
+      <p class="err" id="login-error"></p>
+    </form>
+  </div>
+
+  <div id="panel" class="hidden">
+    <div class="card" id="notice-card" style="display:none"><p id="notice"></p></div>
+
+    <div class="card">
+      <h2>Release</h2>
+      <p>Latest: <b id="version">…</b> <button class="small" id="fetch">Check GitHub now</button></p>
+    </div>
+
+    <div class="card">
+      <h2>Friends</h2>
+      <table id="friends"><tr><th>Name</th><th>State</th><th>Installs</th><th>Last seen</th><th></th></tr></table>
+      <form id="add" class="row" style="margin-top:12px">
+        <input name="name" placeholder="name" required><button>Add friend</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Installs</h2>
+      <table id="installs"><tr><th>Install</th><th>Friend</th><th>Version</th><th>Last seen</th></tr></table>
+    </div>
+
+    <div class="card hidden" id="logs-card">
+      <h2 id="logs-title"></h2>
+      <p class="dim" id="logs-meta"></p>
+      <form id="filter" class="row">
+        <select name="level"><option value="">any level</option><option>INFO</option><option>WARN</option><option>ERROR</option></select>
+        <input name="q" placeholder="text, e.g. combat or pausing">
+        <label class="dim"><input type="checkbox" name="live" style="width:auto"> refresh every 10s</label>
+        <button class="small">Filter</button>
+      </form>
+      <pre class="log" id="log"></pre>
+    </div>
+
+    <p class="dim">Logs are kept <span id="retention">3</span> days. <a href="#" id="signout">Sign out</a></p>
+  </div>
+</main>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const signin = document.getElementById("signin");
+  const panel = document.getElementById("panel");
+  let current = null; // the install whose logs are open
+  let timer = null;
+
+  const notice = (text) => {
+    const card = document.getElementById("notice-card");
+    document.getElementById("notice").textContent = text; card.style.display = text ? "" : "none";
+  };
+
+  async function overview() {
+    const o = await api("/api/admin/overview", { kind: "admin" });
+    document.getElementById("version").textContent = o.version || "none yet";
+    document.getElementById("retention").textContent = o.retentionDays;
+    const friends = document.getElementById("friends");
+    friends.querySelectorAll("tr:not(:first-child)").forEach((r) => r.remove());
+    if (!o.friends.length) friends.insertAdjacentHTML("beforeend", "<tr><td colspan=5 class=dim>No friends yet.</td></tr>");
+    for (const f of o.friends) {
+      friends.insertAdjacentHTML("beforeend", `<tr><td>${escapeHtml(f.name)}</td><td>${f.disabled ? "disabled" : "active"}</td>
+<td>${f.installs}</td><td>${when(f.lastSeen)}</td><td>
+<button class="small" data-toggle="${escapeHtml(f.name)}">${f.disabled ? "Enable" : "Disable"}</button>
+<button class="small" data-password="${escapeHtml(f.name)}">New password</button></td></tr>`);
+    }
+    const installs = document.getElementById("installs");
+    installs.querySelectorAll("tr:not(:first-child)").forEach((r) => r.remove());
+    if (!o.installs.length) installs.insertAdjacentHTML("beforeend", "<tr><td colspan=4 class=dim>No installs have reported yet.</td></tr>");
+    for (const i of o.installs) {
+      installs.insertAdjacentHTML("beforeend", `<tr><td><a href="#" data-logs="${escapeHtml(i.installId)}">${escapeHtml(i.installId.slice(0, 8))}…</a></td>
+<td>${escapeHtml(i.name)}</td><td>${escapeHtml(i.version || "?")}</td><td>${when(i.lastSeen)}</td></tr>`);
+    }
+  }
+
+  async function showLogs() {
+    if (!current) return;
+    const form = new FormData(document.getElementById("filter"));
+    const query = new URLSearchParams({ level: form.get("level") || "", q: form.get("q") || "" });
+    const r = await api(`/api/admin/logs/${current}?${query}`, { kind: "admin" });
+    document.getElementById("logs-card").classList.remove("hidden");
+    document.getElementById("logs-title").textContent = `${r.install.name} · v${r.install.version || "?"}`;
+    document.getElementById("logs-meta").textContent =
+      `Install ${current} · first seen ${when(r.install.firstSeen)} · last seen ${when(r.install.lastSeen)} · ${r.install.lines} lines kept`;
+    const log = document.getElementById("log");
+    log.innerHTML = r.lines.map((l) => `<span class="${escapeHtml(l.level || "")}">${escapeHtml(l.ts || "")} ${escapeHtml((l.level || "").padEnd(5))} ${escapeHtml((l.logger || "").replace("cs4452.", ""))} - ${escapeHtml(l.message || "")}</span>`).join("\n") || "No lines match.";
+    log.scrollTop = log.scrollHeight;
+    clearInterval(timer); timer = null;
+    if (form.get("live")) timer = setInterval(showLogs, 10000);
+  }
+
+  async function open() {
+    try { await overview(); signin.classList.add("hidden"); panel.classList.remove("hidden"); }
+    catch (e) { signin.classList.remove("hidden"); panel.classList.add("hidden"); }
+  }
+  if (session.get("admin")) await open();
+
+  document.getElementById("login").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    document.getElementById("login-error").textContent = "";
+    try {
+      const r = await api("/api/admin/login", { method: "POST", body: { password: new FormData(event.target).get("password") } });
+      session.set("admin", r.token); await open();
+    } catch (e) { document.getElementById("login-error").textContent = e.message; }
+  });
+  document.getElementById("add").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = new FormData(event.target).get("name");
+    try {
+      const r = await api("/api/admin/friends/add", { method: "POST", kind: "admin", body: { name } });
+      notice(`Added ${r.name}. Their password (shown once): ${r.password}`); event.target.reset(); await overview();
+    } catch (e) { notice(e.message); }
+  });
+  document.getElementById("fetch").addEventListener("click", async () => {
+    try { const r = await api("/api/admin/fetch", { method: "POST", kind: "admin" }); notice(`Latest release: ${r.version}`); await overview(); }
+    catch (e) { notice(e.message); }
+  });
+  document.getElementById("friends").addEventListener("click", async (event) => {
+    const toggle = event.target.dataset.toggle, password = event.target.dataset.password;
+    try {
+      if (toggle) { await api("/api/admin/friends/toggle", { method: "POST", kind: "admin", body: { name: toggle } }); await overview(); }
+      if (password) { const r = await api("/api/admin/friends/password", { method: "POST", kind: "admin", body: { name: password } });
+        notice(`New password for ${r.name} (shown once): ${r.password}`); }
+    } catch (e) { notice(e.message); }
+  });
+  document.getElementById("installs").addEventListener("click", async (event) => {
+    if (!event.target.dataset.logs) return;
+    event.preventDefault(); current = event.target.dataset.logs;
+    try { await showLogs(); } catch (e) { notice(e.message); }
+  });
+  document.getElementById("filter").addEventListener("submit", async (event) => {
+    event.preventDefault(); try { await showLogs(); } catch (e) { notice(e.message); }
+  });
+  document.getElementById("signout").addEventListener("click", (event) => {
+    event.preventDefault(); session.clear("admin"); clearInterval(timer);
+    panel.classList.add("hidden"); signin.classList.remove("hidden");
+  });
+});
+</script>
+</body>
+</html>

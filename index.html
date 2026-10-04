@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CS4452</title>
+<link rel="stylesheet" href="site.css">
+<script src="site.js" defer></script>
+</head>
+<body>
+<header><div class="inner">
+  <a class="brand" href="index.html">CS4452</a>
+  <nav><a href="index.html">Home</a><a href="howto.html">How to use</a><a href="downloads.html">Downloads</a></nav>
+</div></header>
+<main>
+  <div class="card">
+    <h1>CS4452 for RuneLite</h1>
+    <p>Plugins that run inside your normal RuneLite. Sign in on the <a href="downloads.html">Downloads</a> page,
+      run the installer once, and open RuneLite as usual. Updates arrive by themselves.</p>
+    <p class="dim">Current version: <b id="version">…</b></p>
+  </div>
+
+  <div class="card news">
+    <h2>News</h2>
+    <!-- Add a new <article> at the top for each update. -->
+    <article>
+      <time>2026-10-04</time>
+      <h3>1.2.0</h3>
+      <p>Auto Login gets past the logged-out screen after a long break by itself. Wire keeps a minimal
+        record (clicks, game messages, hits) so problems can be fixed from the logs.</p>
+    </article>
+    <article>
+      <time>2026-10-04</time>
+      <h3>1.1.0</h3>
+      <p>The updater: installed copies check for a new version when RuneLite starts.</p>
+    </article>
+    <article>
+      <time>2026-10-04</time>
+      <h3>1.0.0</h3>
+      <p>First release for friends.</p>
+    </article>
+  </div>
+</main>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const v = await api("/api/version");
+    document.getElementById("version").textContent = v.version || "not published yet";
+  } catch (e) {
+    document.getElementById("version").textContent = "unknown (" + e.message + ")";
+  }
+});
+</script>
+</body>
+</html>
