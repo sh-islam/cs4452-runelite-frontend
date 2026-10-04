@@ -1,0 +1,26 @@
+# Opens the live site in a browser on GitHub's own machines -- not on the
+# tailnet -- and checks the Downloads page reaches the backend.
+name: check
+on:
+  workflow_dispatch:
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
+      - run: |
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              b = p.chromium.launch(); page = b.new_page()
+              page.goto("https://sh-islam.github.io/cs4452-runelite-frontend/downloads.html")
+              page.fill("#login [name=name]", "nobody"); page.fill("#login [name=password]", "x")
+              page.click("#login button"); page.wait_for_timeout(4000)
+              err = page.text_content("#login-error")
+              print("downloads page says:", err)
+              assert "do not match" in err, err
+              page.goto("https://sh-islam.github.io/cs4452-runelite-frontend/index.html"); page.wait_for_timeout(4000)
+              print("home version:", page.text_content("#version"))
+              b.close()
+          PY
