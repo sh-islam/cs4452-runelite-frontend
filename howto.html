@@ -15,46 +15,89 @@
 <main>
   <div class="card">
     <h1>How to use</h1>
-    <p class="dim">This page is a starting point. Fill it in as you like.</p>
+    <p>Five minutes to set up, then it's one button. Read the whole page once.</p>
   </div>
 
   <div class="card">
-    <h2>Setting up (once)</h2>
+    <h2>1. Install (once)</h2>
     <ol>
-      <li>Have RuneLite installed (CS4452 Play uses its Java). The Jagex launcher is fine.</li>
-      <li>On the <a href="downloads.html">Downloads</a> page, sign in and download
-        <b>CS4452-Setup.cmd</b>. Run it and press Enter.</li>
-      <li>Double-click <b>CS4452 Play</b> on your Desktop. It is a separate RuneLite: your normal one is
-        left alone. The CS4452 plugins are in its plugin list, switched off until you tick one.</li>
+      <li>Have RuneLite installed. The Jagex launcher is fine.</li>
+      <li>On <a href="downloads.html">Downloads</a>, sign in and download <b>CS4452-Setup.cmd</b>. Run it, press Enter.</li>
+      <li>Double-click <b>CS4452 Play</b> on your Desktop. It's a separate RuneLite; your normal one isn't touched.</li>
     </ol>
     <p class="dim">Windows may say "Windows protected your PC": click <i>More info</i>, then <i>Run anyway</i>.</p>
   </div>
 
   <div class="card">
-    <h2>Running a plugin</h2>
+    <h2>2. Game settings (match these, once)</h2>
+    <p>The bots press the game's own keys and click its own buttons, so the game has to be set up the way they expect.
+      In-game: Settings (the gear) → <b>Controls → Keybinds</b>, and Settings → <b>Interfaces</b>.</p>
+    <h3>Keybinds</h3>
+    <table>
+      <tr><td>Combat</td><td><kbd>F1</kbd></td><td>Prayer</td><td><kbd>F6</kbd></td></tr>
+      <tr><td>Skills</td><td><kbd>F2</kbd></td><td>Magic</td><td><kbd>F7</kbd></td></tr>
+      <tr><td>Quests</td><td><kbd>F3</kbd></td><td>Friends</td><td><kbd>F8</kbd></td></tr>
+      <tr><td>Inventory</td><td><kbd>F4</kbd></td><td>Account</td><td><kbd>F9</kbd></td></tr>
+      <tr><td>Equipment</td><td><kbd>F5</kbd></td><td>Logout</td><td><kbd>F10</kbd></td></tr>
+    </table>
+    <h3>Interfaces: tick all four</h3>
     <ul>
-      <li>Each plugin has its own settings (the wrench next to it). Read the top section first.</li>
-      <li><b>Run the bot</b> starts it. The pause key (<kbd>`</kbd> by default) pauses and resumes the one you last started.</li>
-      <li>Stand where the plugin's description says to start, with the right things in your bag or bank.</li>
-      <li>Running out of a required item ends the run and logs out.</li>
+      <li>Modern menu interface – Transparent background</li>
+      <li>Click through transparent chatbox</li>
+      <li>Transparent chatbox</li>
+      <li>Transparent side panel</li>
     </ul>
+    <p class="dim">Everything else can stay as you like it.</p>
   </div>
 
   <div class="card">
-    <h2>Updates</h2>
-    <p>When RuneLite starts, the CS4452 Updater checks for a new version and downloads it. A message says
-      "restart RuneLite to use it". That's all.</p>
+    <h2>3. Running a bot</h2>
+    <ul>
+      <li>Open the <b>CS4452 Bots</b> panel (its icon in RuneLite's side bar). Every bot is there with its few settings.</li>
+      <li>Stand where the bot wants you (its card says), with the right things in your bag or bank, and press <b>Start</b>.</li>
+      <li><kbd>`</kbd> (the key left of <kbd>1</kbd>) pauses and resumes. It's the same key for every bot.</li>
+      <li>Run <b>one bot at a time</b>. Keep the others off.</li>
+      <li>Out of a required item, or stuck for a few minutes, it stops and tells you why.</li>
+    </ul>
+    <p>You start with our settings: combat setups, recipes, presets, break times. Change what you like; your changes stick.</p>
+  </div>
+
+  <div class="card">
+    <h2>4. Three things to leave on</h2>
+    <h3>Auto Login</h3>
+    <p>Nothing to set up. Log in through the Jagex launcher once and CS4452 Play logs in as that account by itself,
+      and logs back in after a break or a disconnect. Just leave the plugin on.</p>
+    <h3>Breaks</h3>
+    <p>Every so often the bot stops for a few minutes and logs out, like a person would, then carries on.
+      Leave it on. The times are in the Breaks plugin if you want them different.</p>
+    <h3>CS4452 Updater</h3>
+    <p>Two jobs. It fetches new versions (you'll see "restart RuneLite to use it"), and it sends the bots' own log
+      lines home so problems get fixed. Only the bots' lines: no chat, no bank, no account names, no passwords.
+      Kept 3 days, then deleted. Leave it on; it's how a bug you hit gets fixed.</p>
+  </div>
+
+  <div class="card">
+    <h2>5. What's in the list</h2>
+    <p>Everything starting with <b>CS4452</b> is ours. Two kinds:</p>
+    <ul>
+      <li><b>Bots</b> (Combat, Fishing, Mining, Agility, Hunter, Thieving, Magic, Processor and the rest): they play for
+        you. Start them from the Bots panel, one at a time.</li>
+      <li><b>Helpers</b> (Bank Manager, Breaks, Auto Login, Pathing, Updater): they don't play, they help. Bank Manager
+        swaps your gear and bag to a saved preset in one go; Pathing is the walking the bots use. These can stay on.</li>
+    </ul>
+    <p>Fashionscape v2 is just looks.</p>
+  </div>
+
+  <div class="card">
+    <h2>6. Be honest with yourself</h2>
+    <p>Anything that clicks for you is against the rules and can get the account banned. That's the bots, and it's
+      Bank Manager too. Breaks, one bot at a time and not running it all night make it look more like a person, not
+      less against the rules. Don't do this on an account you'd cry over.</p>
   </div>
 
   <div class="card">
     <h2>Removing it</h2>
-    <p>Run the installer again and press <kbd>U</kbd>. RuneLite is back to how it was.</p>
-  </div>
-
-  <div class="card">
-    <h2>Logs</h2>
-    <p>The plugins send their own log lines (not chat, not your bank, no account names) so problems can be
-      fixed. They are deleted after 3 days. The <b>CS4452 Updater</b> plugin's settings can switch this off.</p>
+    <p>Run the installer again and press <kbd>U</kbd>. Your RuneLite is as it was.</p>
   </div>
 </main>
 </body>
