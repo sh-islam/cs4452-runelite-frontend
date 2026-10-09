@@ -1,29 +1,643 @@
-:root { --bg:#14161a; --card:#1d2026; --text:#e8e8ea; --dim:#9aa0a8; --accent:#ff981f; --line:#2a2e36; }
+/*
+  CS4452 -- an Old School feel, built from the game's two materials.
+
+  Stone is the interface: the header and its tabs, buttons, keys, the sign-in
+  box and every admin panel. It is lit from the top left and shadowed at the
+  bottom right, with a black outline, the way the game draws its panels.
+  Parchment is for reading: the how-to and the news, framed in stone like a
+  scroll interface.
+
+  Type: Cinzel for engraved titles, Alegreya for reading, Pixelify Sans for the
+  game's own small labels (tabs, buttons, keys, the news lines).
+  Colour: the game's title orange, a gold wordmark, chat yellow only on the
+  sign-in labels. Original work: no Jagex logos or art.
+*/
+
+:root {
+  --night: #0d0b08;
+
+  --stone: #3e3529;
+  --stone-mid: #4a4033;
+  --stone-deep: #2a241b;
+  --stone-lit: #6e604a;
+  --stone-dark: #15110b;
+
+  --parch: #e0cc9f;
+  --parch-light: #ecdcb7;
+  --parch-edge: #b0925c;
+  --ink: #2b1d0e;
+  --ink-soft: #5e4a31;
+  --ink-red: #7c1b0d;
+  --ink-blue: #1d3684;
+
+  --orange: #ff981f;
+  --gold: #f3c75d;
+  --yellow: #ffff00;
+  --text: #f1ebdd;
+  --text-dim: #b8aa8c;
+  --red: #ff5a4a;
+
+  --display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --read: "Alegreya", Georgia, "Times New Roman", serif;
+  --pixel: "Pixelify Sans", "Courier New", monospace;
+
+  /* Grain: stone and paper are never flat. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --fibres: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .09' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .12  0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+}
+
 * { box-sizing: border-box; }
-body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui, sans-serif; }
-header { border-bottom:1px solid var(--line); }
-header .inner { max-width:900px; margin:0 auto; padding:14px 16px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
-header .brand { color:var(--accent); font-weight:700; font-size:20px; text-decoration:none; }
-header nav a { color:var(--dim); text-decoration:none; margin-right:14px; }
-header nav a.on, header nav a:hover { color:var(--text); }
-main { max-width:900px; margin:28px auto; padding:0 16px; }
-.card { background:var(--card); border-radius:10px; padding:20px 24px; margin-bottom:16px; }
-h1 { color:var(--accent); margin:0 0 10px; } h2 { margin:0 0 8px; font-size:19px; } h3 { margin:14px 0 4px; font-size:16px; }
-p { margin:8px 0; } ol, ul { padding-left:22px; } .dim { color:var(--dim); font-size:14px; } .err { color:#ff6b6b; }
-a { color:var(--accent); }
-.button, button { display:inline-block; background:var(--accent); color:#111; border:0; border-radius:6px;
-  padding:10px 16px; font-weight:600; text-decoration:none; cursor:pointer; font-size:15px; }
-button.small { padding:4px 10px; font-size:13px; } button:disabled { opacity:.5; cursor:default; }
-label { display:block; margin:6px 0; } input, select { width:100%; padding:10px; margin:4px 0 10px; border-radius:6px;
-  border:1px solid #333; background:#111; color:var(--text); font-size:15px; }
-.row { display:flex; gap:8px; flex-wrap:wrap; align-items:end; } .row input, .row select { width:auto; margin:0; }
-table { width:100%; border-collapse:collapse; font-size:14px; }
-td, th { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
-th { color:var(--dim); font-weight:600; }
-pre.log { background:#0e1013; border-radius:8px; padding:12px; overflow:auto; font-size:12px; line-height:1.45;
-  white-space:pre-wrap; word-break:break-word; max-height:70vh; }
-.WARN { color:#ffcc66; } .ERROR { color:#ff6b6b; }
-.news article { border-top:1px solid var(--line); padding:12px 0; } .news article:first-child { border-top:0; padding-top:0; }
-.news time { color:var(--dim); font-size:13px; }
-kbd { background:#0e1013; border:1px solid #333; border-radius:4px; padding:1px 6px; font-size:13px; }
-.hidden { display:none; }
+
+html { background: var(--night); }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+  font: 18px/1.6 var(--read);
+  background-color: var(--night);
+  background-image:
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 152, 31, .07), transparent 70%),
+    var(--grain);
+  text-rendering: optimizeLegibility;
+}
+
+a { color: var(--orange); }
+a:hover { color: var(--yellow); }
+
+/* -- the header: a strip of stone, the wordmark, the tabs ------------------------------ */
+
+header {
+  background: var(--stone-deep) var(--grain);
+  border-bottom: 2px solid var(--stone-dark);
+  box-shadow: inset 0 -1px 0 var(--stone-lit), 0 6px 20px rgba(0, 0, 0, .6);
+  position: relative;
+  z-index: 1;
+}
+
+header .inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px 16px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: .06em;
+  color: var(--gold);
+  text-decoration: none;
+  padding-bottom: 14px;
+  text-shadow: 0 1px 0 #fff2c2, 0 2px 0 #9a6618, 0 3px 0 #5a3a0a, 0 4px 0 #2a1904, 0 6px 10px rgba(0, 0, 0, .85);
+}
+.brand:hover { color: #ffd876; }
+.brand small {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--pixel);
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--orange);
+  text-shadow: 1px 1px 0 #000;
+}
+
+header nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+header nav a {
+  position: relative;
+  top: 2px;
+  font-family: var(--pixel);
+  font-size: 16px;
+  color: var(--orange);
+  text-decoration: none;
+  text-shadow: 1px 1px 0 #000;
+  padding: 10px 18px 9px;
+  background: var(--stone) var(--grain);
+  border: 2px solid;
+  border-bottom: 0;
+  border-color: var(--stone-lit) var(--stone-dark) transparent var(--stone-lit);
+  border-radius: 7px 7px 0 0;
+  box-shadow: 0 0 0 1px #000;
+  clip-path: inset(-2px -2px 0 -2px);
+}
+header nav a:hover { color: var(--yellow); background-color: var(--stone-mid); }
+/* The open tab: red-lit, as the game marks the tab you are on. */
+header nav a.on {
+  color: var(--yellow);
+  background: linear-gradient(#6d2c1a, #4b1f12) , var(--grain);
+  background-blend-mode: normal;
+}
+
+/* -- the page ------------------------------------------------------------------------- */
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 920px;
+  margin: 40px auto 48px;
+  padding: 0 16px;
+}
+
+h1, h2, h3 { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+
+/* -- parchment: the reading panels ---------------------------------------------------- */
+
+.card {
+  position: relative;
+  color: var(--ink);
+  padding: 30px 36px 26px;
+  margin: 0 0 30px;
+  background-color: var(--parch);
+  background-image:
+    radial-gradient(ellipse at 50% 45%, rgba(255, 248, 224, .55), transparent 62%),
+    radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(112, 72, 24, .34) 100%),
+    var(--fibres),
+    var(--grain);
+  border: 1px solid var(--parch-edge);
+  box-shadow:
+    0 0 0 4px var(--stone-deep),
+    0 0 0 5px var(--stone-lit),
+    0 0 0 7px var(--stone-dark),
+    0 0 0 8px #000,
+    0 18px 34px rgba(0, 0, 0, .6),
+    inset 0 0 50px rgba(110, 70, 22, .28);
+}
+
+.card h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.15;
+  letter-spacing: .02em;
+  color: var(--ink-red);
+  margin: 0 0 10px;
+}
+
+.card h2 {
+  position: relative;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 23px;
+  letter-spacing: .02em;
+  color: var(--ink);
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+}
+/* A ruled line with a lozenge at its start, as a scribe would. */
+.card h2::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--parch-edge), rgba(176, 146, 92, 0) 92%);
+}
+.card h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 7px;
+  height: 7px;
+  background: var(--ink-red);
+  transform: rotate(45deg);
+}
+
+.card h3 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink-red);
+  margin: 20px 0 4px;
+}
+
+.card p { margin: 8px 0; }
+.card ol, .card ul { padding-left: 24px; margin: 8px 0; }
+.card li { margin: 4px 0; }
+.card li::marker { color: var(--ink-red); font-family: var(--display); font-weight: 700; }
+.card b { color: #1c1207; }
+.card a { color: var(--ink-red); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.card a:hover { color: #b0300f; }
+
+.card .dim { color: var(--ink-soft); font-size: 16px; }
+.card .err { color: var(--ink-red); font-weight: 700; }
+
+.card img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 12px 0 16px;
+  border: 3px solid var(--stone-deep);
+  box-shadow: 0 0 0 1px #000, 0 8px 18px rgba(0, 0, 0, .45);
+}
+
+/* -- stone: the interface panels ------------------------------------------------------ */
+
+.card.stone, .stone {
+  color: var(--text);
+  background-color: var(--stone);
+  background-image:
+    radial-gradient(ellipse at 30% 0%, rgba(255, 255, 255, .05), transparent 60%),
+    var(--grain);
+  border: 2px solid;
+  border-color: var(--stone-lit) var(--stone-dark) var(--stone-dark) var(--stone-lit);
+  box-shadow: 0 0 0 1px #000, 0 18px 34px rgba(0, 0, 0, .6), inset 0 0 0 1px rgba(0, 0, 0, .3);
+}
+.stone h1, .card.stone h1 {
+  color: var(--gold);
+  text-shadow: 0 2px 0 #4a2d06, 0 3px 6px rgba(0, 0, 0, .8);
+}
+.stone h2, .card.stone h2 { color: var(--orange); text-shadow: 1px 1px 0 #000; }
+.stone h2::before, .card.stone h2::before { background: var(--orange); }
+.stone h2::after, .card.stone h2::after { background: linear-gradient(90deg, var(--stone-lit), rgba(110, 96, 74, 0) 92%); }
+.stone b, .card.stone b { color: #fff; }
+.stone a, .card.stone a { color: var(--orange); }
+.stone a:hover, .card.stone a:hover { color: var(--yellow); }
+.stone .dim, .card.stone .dim { color: var(--text-dim); }
+.stone .err, .card.stone .err { color: var(--red); font-family: var(--pixel); font-weight: 400; text-shadow: 1px 1px 0 #000; }
+
+/* -- the hero (home): a stone tablet with an engraved title ----------------------------- */
+
+.hero {
+  text-align: center;
+  padding: 54px 32px 44px;
+  margin: 0 0 34px;
+}
+.hero .eyebrow {
+  font-family: var(--pixel);
+  font-size: 15px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--orange);
+  text-shadow: 1px 1px 0 #000;
+  margin: 0 0 14px;
+}
+.hero h1 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(40px, 7vw, 66px);
+  line-height: 1.05;
+  letter-spacing: .03em;
+  margin: 0 0 18px;
+  color: var(--gold);
+  text-shadow: 0 1px 0 #fff2c2, 0 2px 0 #9a6618, 0 3px 0 #5a3a0a, 0 5px 0 #2a1904, 0 9px 16px rgba(0, 0, 0, .85);
+}
+.hero .lead {
+  max-width: 600px;
+  margin: 0 auto 28px;
+  font-size: 20px;
+  color: var(--text);
+}
+.hero .actions { display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.hero .plaque {
+  display: inline-block;
+  margin: 30px 0 0;
+  font-family: var(--pixel);
+  font-size: 15px;
+  color: var(--text-dim);
+  padding: 6px 14px;
+  background: var(--stone-deep);
+  border: 1px solid;
+  border-color: var(--stone-dark) var(--stone-lit) var(--stone-lit) var(--stone-dark);
+}
+.hero .plaque b { color: var(--yellow); font-weight: 400; }
+
+/* A carved divider: two rules and a lozenge. */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 360px;
+  margin: 0 auto 22px;
+}
+.divider::before, .divider::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--stone-lit));
+  box-shadow: 0 1px 0 var(--stone-dark);
+}
+.divider::after { background: linear-gradient(270deg, transparent, var(--stone-lit)); }
+.divider span {
+  width: 10px;
+  height: 10px;
+  background: var(--orange);
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 2px var(--stone-dark), 0 0 12px rgba(255, 152, 31, .5);
+}
+
+/* -- buttons: stone, bevelled, orange lettering ------------------------------------------ */
+
+.button, button {
+  display: inline-block;
+  font-family: var(--pixel);
+  font-size: 17px;
+  line-height: 1.2;
+  color: var(--orange);
+  text-shadow: 1px 1px 0 #000;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 11px 22px;
+  background: var(--stone-mid) var(--grain);
+  border: 2px solid;
+  border-color: var(--stone-lit) var(--stone-dark) var(--stone-dark) var(--stone-lit);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px #000, 0 3px 0 rgba(0, 0, 0, .35);
+  transition: color .12s, background-color .12s;
+}
+.button:hover, button:hover { color: var(--yellow); background-color: #5a4d3c; }
+.button:active, button:active {
+  border-color: var(--stone-dark) var(--stone-lit) var(--stone-lit) var(--stone-dark);
+  transform: translateY(1px);
+  box-shadow: 0 0 0 1px #000;
+}
+.button:focus-visible, button:focus-visible { outline: 2px solid var(--yellow); outline-offset: 3px; }
+.button.primary, button.primary { font-size: 20px; padding: 14px 30px; color: var(--gold); }
+.button.primary:hover, button.primary:hover { color: #fff3b0; }
+button.small, .button.small { font-size: 14px; padding: 5px 12px; }
+button:disabled { opacity: .5; cursor: default; }
+
+/* -- forms: the sign-in box ---------------------------------------------------------------- */
+
+label {
+  display: block;
+  margin: 8px 0;
+  font-family: var(--pixel);
+  font-size: 16px;
+  color: var(--yellow);
+  text-shadow: 1px 1px 0 #000;
+}
+
+input, select {
+  width: 100%;
+  font-family: var(--pixel);
+  font-size: 17px;
+  color: #fff;
+  padding: 10px 12px;
+  margin: 6px 0 14px;
+  background: #0c0a07;
+  border: 2px solid;
+  border-color: var(--stone-dark) var(--stone-lit) var(--stone-lit) var(--stone-dark);
+  border-radius: 0;
+}
+input::placeholder { color: #7d7260; }
+input:focus, select:focus { outline: 2px solid var(--orange); outline-offset: 1px; }
+input[type="checkbox"] { width: auto; margin: 0 6px 0 0; accent-color: var(--orange); }
+
+.signin { max-width: 460px; margin-left: auto; margin-right: auto; }
+.signin form { margin-top: 14px; }
+
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; }
+.row input, .row select { width: auto; flex: 1 1 160px; margin: 0; }
+.row label { margin: 0; align-self: center; }
+
+/* -- keys ----------------------------------------------------------------------------------- */
+
+kbd {
+  display: inline-block;
+  min-width: 26px;
+  text-align: center;
+  font-family: var(--pixel);
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--orange);
+  text-shadow: 1px 1px 0 #000;
+  padding: 1px 8px;
+  background: var(--stone) var(--grain);
+  border: 1px solid;
+  border-color: var(--stone-lit) var(--stone-dark) var(--stone-dark) var(--stone-lit);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px #000;
+  vertical-align: 1px;
+}
+
+/* -- tables: a ledger on parchment, a list in stone ----------------------------------------- */
+
+table { width: 100%; border-collapse: collapse; font-size: 16px; margin: 8px 0; }
+td, th { text-align: left; padding: 8px 10px; vertical-align: top; }
+.card table td { border-bottom: 1px solid rgba(94, 74, 49, .28); }
+.card table tr:nth-child(even) td { background: rgba(255, 248, 224, .28); }
+
+.stone table th, .card.stone table th {
+  font-family: var(--pixel);
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--orange);
+  text-shadow: 1px 1px 0 #000;
+  border-bottom: 2px solid var(--stone-dark);
+  box-shadow: 0 1px 0 var(--stone-lit);
+}
+.stone table td, .card.stone table td {
+  border-bottom: 1px solid var(--stone-deep);
+  background: none;
+}
+.stone table tr:hover td, .card.stone table tr:hover td { background: rgba(255, 255, 255, .04); }
+.stone table td .small { margin: 0 4px 4px 0; }
+
+/* -- the news: lines in the game's chat ----------------------------------------------------- */
+
+.news article {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--pixel);
+  font-size: 17px;
+  padding: 8px 0;
+  border-top: 1px dashed rgba(94, 74, 49, .35);
+}
+.news article:first-of-type { border-top: 0; }
+.news time { color: var(--ink-blue); }
+.news time::before { content: "["; }
+.news time::after { content: "]"; }
+.news h3 {
+  font: inherit;
+  margin: 0;
+  color: var(--ink);
+}
+.news h3::before { content: "News: "; color: var(--ink-red); }
+.news p { width: 100%; margin: 2px 0 0; font-family: var(--read); font-size: 17px; }
+
+/* -- the admin's log ------------------------------------------------------------------------ */
+
+pre.log {
+  background: #0a0806;
+  color: #d9d0bd;
+  border: 2px solid;
+  border-color: var(--stone-dark) var(--stone-lit) var(--stone-lit) var(--stone-dark);
+  padding: 12px;
+  overflow: auto;
+  font: 12px/1.5 Consolas, "Courier New", monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 70vh;
+}
+.WARN { color: var(--yellow); }
+.ERROR { color: var(--red); }
+
+/* -- the footer ----------------------------------------------------------------------------- */
+
+footer {
+  background: var(--stone-deep) var(--grain);
+  border-top: 2px solid var(--stone-dark);
+  box-shadow: inset 0 1px 0 var(--stone-lit);
+}
+footer .inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px 20px;
+  flex-wrap: wrap;
+  font-family: var(--pixel);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+footer .inner span:first-child { color: var(--orange); }
+
+.hidden { display: none !important; }
+
+/* -- small screens -------------------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  body { font-size: 17px; }
+  header .inner { padding-top: 14px; }
+  .brand { font-size: 30px; padding-bottom: 10px; }
+  header nav { width: 100%; gap: 4px; }
+  header nav a { flex: 1 1 30%; text-align: center; white-space: nowrap; padding: 8px 6px 7px; font-size: 14px; }
+  main { margin-top: 28px; }
+  .card { padding: 22px 20px 18px; }
+  .card h1 { font-size: 32px; }
+  .hero { padding: 38px 20px 32px; }
+  .hero .lead { font-size: 18px; }
+  td, th { padding: 6px; }
+  .bot { grid-template-columns: 52px 1fr; gap: 12px; }
+  .slot { width: 52px; height: 48px; }
+  .slot img { width: 44px; }
+  table { font-size: 15px; }
+  .card table { display: block; overflow-x: auto; }
+}
+
+/* -- icons in the text: a side-panel button, as RuneLite shows it -------------------------- */
+
+img.ico {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  padding: 2px;
+  margin: 0 5px 0 2px;
+  vertical-align: -5px;
+  image-rendering: pixelated;
+  background: var(--stone-deep);
+  border: 1px solid #000;
+  box-shadow: none;
+}
+.card img.ico { margin: 0 5px 0 2px; border: 1px solid #000; box-shadow: none; }
+
+/* -- the bots: each in an inventory slot --------------------------------------------------- */
+
+.bots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr));
+  gap: 6px 26px;
+}
+.bot {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 16px;
+  align-items: start;
+  padding: 14px 0;
+  border-top: 1px dashed rgba(94, 74, 49, .3);
+}
+.bot h3 { margin: 0 0 2px; display: flex; align-items: center; gap: 4px; }
+.bot p { margin: 4px 0; }
+.bot .dim { font-size: 15px; }
+.slot {
+  width: 64px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  background: var(--stone) var(--grain);
+  border: 2px solid;
+  border-color: var(--stone-dark) var(--stone-lit) var(--stone-lit) var(--stone-dark);
+  box-shadow: 0 0 0 1px #000;
+}
+.slot img {
+  width: 54px;
+  height: auto;
+  margin: 0;
+  border: 0;
+  box-shadow: none;
+  image-rendering: pixelated;
+  filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, .7));
+}
+.card .slot img { margin: 0; border: 0; box-shadow: none; }
+.slot img.panel { width: 36px; }
+.slot.empty { background-image: none; opacity: .55; }
+
+@media (max-width: 640px) {
+  .bots { grid-template-columns: 1fr; }
+}
+
+/* -- step numbers: a red seal with a plain numeral (Cinzel draws 1 as I) -------------------- */
+
+.num {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  vertical-align: 2px;
+  font-family: var(--read);
+  font-weight: 700;
+  font-size: 17px;
+  color: #f6e7c4;
+  background: radial-gradient(circle at 35% 30%, #a8321c, #6a160a 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #4a0f06, 0 2px 4px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+table.keys { max-width: 560px; }
+table.keys td:nth-child(2), table.keys td:nth-child(4) { width: 64px; }
+
+/* -- the report form ------------------------------------------------------------------------ */
+
+textarea {
+  width: 100%;
+  font-family: var(--read);
+  font-size: 17px;
+  line-height: 1.5;
+  color: #fff;
+  padding: 10px 12px;
+  margin: 6px 0 14px;
+  background: #0c0a07;
+  border: 2px solid;
+  border-color: var(--stone-dark) var(--stone-lit) var(--stone-lit) var(--stone-dark);
+  border-radius: 0;
+  resize: vertical;
+}
+textarea::placeholder { color: #7d7260; }
+textarea:focus { outline: 2px solid var(--orange); outline-offset: 1px; }
+input[type="datetime-local"] { color-scheme: dark; }
+select { color-scheme: dark; }
+label.check { display: flex; align-items: center; gap: 4px; color: var(--text); margin: 6px 0 18px; }
+label.check input { width: 18px; height: 18px; }
+#report-card { max-width: 640px; margin-left: auto; margin-right: auto; }

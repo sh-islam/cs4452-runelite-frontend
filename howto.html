@@ -4,13 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>How to use · CS4452</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=Cinzel:wght@600;700;800&family=Pixelify+Sans:wght@400;500&display=swap">
 <link rel="stylesheet" href="site.css">
 <script src="site.js" defer></script>
 </head>
 <body>
 <header><div class="inner">
-  <a class="brand" href="index.html">CS4452</a>
-  <nav><a href="index.html">Home</a><a href="howto.html">How to use</a><a href="downloads.html">Downloads</a></nav>
+  <a class="brand" href="index.html">CS4452<small>for RuneLite</small></a>
+  <nav><a href="index.html">Home</a><a href="howto.html">How to use</a><a href="bots.html">Bots</a><a href="downloads.html">Downloads</a><a href="report.html">Report a problem</a></nav>
 </div></header>
 <main>
   <div class="card">
@@ -19,7 +23,7 @@
   </div>
 
   <div class="card">
-    <h2>1. Install (once)</h2>
+    <h2><span class="num">1</span>Install (once)</h2>
     <ol>
       <li>Have RuneLite installed. The Jagex launcher is fine.</li>
       <li>On <a href="downloads.html">Downloads</a>, sign in and download <b>CS4452-Setup.cmd</b>. Run it, press Enter.</li>
@@ -29,12 +33,12 @@
   </div>
 
   <div class="card">
-    <h2>2. Game settings (match these, once)</h2>
+    <h2><span class="num">2</span>Game settings (match these, once)</h2>
     <p>The bots press the game's own keys and click its own buttons, so the game has to be set up the way they expect.
-      In-game: Settings (the gear) → <b>Controls → Keybinds</b>, and Settings → <b>Interfaces</b>.</p>
+      In-game: Settings (the gear), then <b>Controls → Keybinds</b>, and <b>Interfaces</b>.</p>
     <h3>Keybinds</h3>
-    <img src="images/keybinds.png" alt="The keybinds: F1 to F10" style="max-width:100%;border-radius:8px;margin:6px 0">
-    <table>
+    <img src="images/keybinds.png" alt="The keybinds: F1 to F10">
+    <table class="keys">
       <tr><td>Combat</td><td><kbd>F1</kbd></td><td>Prayer</td><td><kbd>F6</kbd></td></tr>
       <tr><td>Skills</td><td><kbd>F2</kbd></td><td>Magic</td><td><kbd>F7</kbd></td></tr>
       <tr><td>Quests</td><td><kbd>F3</kbd></td><td>Friends</td><td><kbd>F8</kbd></td></tr>
@@ -42,7 +46,7 @@
       <tr><td>Equipment</td><td><kbd>F5</kbd></td><td>Logout</td><td><kbd>F10</kbd></td></tr>
     </table>
     <h3>Interfaces: tick all four</h3>
-    <img src="images/interfaces.png" alt="The four Interfaces settings, all ticked" style="max-width:100%;border-radius:8px;margin:6px 0">
+    <img src="images/interfaces.png" alt="The four Interfaces settings, all ticked">
     <ul>
       <li>Modern menu interface – Transparent background</li>
       <li>Click through transparent chatbox</li>
@@ -53,11 +57,13 @@
   </div>
 
   <div class="card">
-    <h2>3. Running a bot</h2>
+    <h2><span class="num">3</span>Running a bot</h2>
     <ul>
-      <li>Open the <b>CS4452 Bots</b> panel (its icon in RuneLite's side bar). Every bot is there with its few settings.</li>
+      <li>Open the <img class="ico" src="images/icons/bots.png" alt=""><b>CS4452 Bots</b> panel: that icon, in RuneLite's
+        side bar on the right. Every bot is there with its few settings. What each one does is on the
+        <a href="bots.html">Bots</a> page.</li>
       <li>Stand where the bot wants you (its card says), with the right things in your bag or bank, and press <b>Start</b>.</li>
-      <li><kbd>`</kbd> (the key left of <kbd>1</kbd>) pauses and resumes. It's the same key for every bot.</li>
+      <li><kbd>` ~</kbd> (the key left of <kbd>1</kbd>) pauses and resumes. It's the same key for every bot.</li>
       <li>Run <b>one bot at a time</b>. Keep the others off.</li>
       <li>Out of a required item, or stuck for a few minutes, it stops and tells you why.</li>
     </ul>
@@ -65,7 +71,7 @@
   </div>
 
   <div class="card">
-    <h2>4. Three things to leave on</h2>
+    <h2><span class="num">4</span>Three things to leave on</h2>
     <h3>Auto Login</h3>
     <p>Nothing to set up. Log in through the Jagex launcher once and CS4452 Play logs in as that account by itself,
       and logs back in after a break or a disconnect. Just leave the plugin on.</p>
@@ -75,23 +81,27 @@
     <h3>CS4452 Updater</h3>
     <p>Two jobs. It fetches new versions (you'll see "restart RuneLite to use it"), and it sends the bots' own log
       lines home so problems get fixed. Only the bots' lines: no chat, no bank, no account names, no passwords.
-      Kept 3 days, then deleted. Leave it on; it's how a bug you hit gets fixed.</p>
+      Kept 3 days, then deleted. Leave it on; it's how a bug you hit gets fixed.
+      Hit one? <a href="report.html">Report a problem</a>.</p>
   </div>
 
   <div class="card">
-    <h2>5. What's in the list</h2>
+    <h2><span class="num">5</span>What's in the list</h2>
     <p>Everything starting with <b>CS4452</b> is ours. Two kinds:</p>
     <ul>
-      <li><b>Bots</b> (Combat, Fishing, Mining, Agility, Hunter, Thieving, Magic, Processor and the rest): they play for
-        you. Start them from the Bots panel, one at a time.</li>
-      <li><b>Helpers</b> (Bank Manager, Breaks, Auto Login, Pathing, Updater): they don't play, they help. Bank Manager
-        swaps your gear and bag to a saved preset in one go; Pathing is the walking the bots use. These can stay on.</li>
+      <li><b>Bots</b> (Combat, Fishing, Agility, Hunter, Thieving, Magic, Processor and the rest): they play for you.
+        Start them from the <img class="ico" src="images/icons/bots.png" alt="">Bots panel, one at a time.</li>
+      <li><b>Helpers</b>: they don't play, they help, and can stay on.
+        <img class="ico" src="images/icons/bank-manager.png" alt=""><b>Bank Manager</b> swaps your gear and bag to a
+        saved preset in one go. <img class="ico" src="images/icons/money-maker.png" alt=""><b>Money Maker</b> ranks
+        money-making methods by live prices. Breaks, Auto Login, Pathing (the walking the bots use) and the Updater
+        work without a panel.</li>
     </ul>
-    <p>Fashionscape v2 is just looks.</p>
+    <p><img class="ico" src="images/icons/fashionscape.png" alt=""><b>Fashionscape v2</b> is just looks; only you see it.</p>
   </div>
 
   <div class="card">
-    <h2>6. Be honest with yourself</h2>
+    <h2><span class="num">6</span>Be honest with yourself</h2>
     <p>Anything that clicks for you is against the rules and can get the account banned. That's the bots, and it's
       Bank Manager too. Breaks, one bot at a time and not running it all night make it look more like a person, not
       less against the rules. Don't do this on an account you'd cry over.</p>
@@ -102,5 +112,6 @@
     <p>Run the installer again and press <kbd>U</kbd>. Your RuneLite is as it was.</p>
   </div>
 </main>
+<footer><div class="inner"><span>CS4452</span><span>A private project for friends. Not affiliated with Jagex or RuneLite.</span></div></footer>
 </body>
 </html>

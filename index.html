@@ -4,32 +4,42 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CS4452</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=Cinzel:wght@600;700;800&family=Pixelify+Sans:wght@400;500&display=swap">
 <link rel="stylesheet" href="site.css">
 <script src="site.js" defer></script>
 </head>
 <body>
 <header><div class="inner">
-  <a class="brand" href="index.html">CS4452</a>
-  <nav><a href="index.html">Home</a><a href="howto.html">How to use</a><a href="downloads.html">Downloads</a></nav>
+  <a class="brand" href="index.html">CS4452<small>for RuneLite</small></a>
+  <nav><a href="index.html">Home</a><a href="howto.html">How to use</a><a href="bots.html">Bots</a><a href="downloads.html">Downloads</a><a href="report.html">Report a problem</a></nav>
 </div></header>
 <main>
-  <div class="card">
-    <h1>CS4452 for RuneLite</h1>
-    <p>CS4452 Play: its own RuneLite with the CS4452 plugins, beside your normal one, which is never
-      touched. Sign in on the <a href="downloads.html">Downloads</a> page, run the installer once, then
-      double-click <b>CS4452 Play</b> on your Desktop. Updates arrive by themselves.</p>
-    <p class="dim">Current version: <b id="version">…</b></p>
-  </div>
+  <section class="hero stone">
+    <p class="eyebrow">Old School · RuneLite</p>
+    <h1>CS4452</h1>
+    <div class="divider"><span></span></div>
+    <p class="lead">Its own RuneLite with the CS4452 plugins, beside your normal one, which is never touched.
+      Install once, double-click <b>CS4452 Play</b>, and updates arrive by themselves.</p>
+    <div class="actions">
+      <a class="button primary" href="downloads.html">Get CS4452 Play</a>
+      <a class="button" href="howto.html">How to use</a>
+    </div>
+    <p class="plaque">Current version: <b id="version">…</b></p>
+  </section>
 
   <div class="card news">
     <h2>News</h2>
-    <!-- Add a new <article> at the top for each update. -->
+    <!-- Add a new <article> at the top for each update: <time>, <h3>, and a <p> if there is more to say. -->
     <article>
       <time>2026-10-04</time>
       <h3>v1.0 released</h3>
     </article>
   </div>
 </main>
+<footer><div class="inner"><span>CS4452</span><span>A private project for friends. Not affiliated with Jagex or RuneLite.</span></div></footer>
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
   try {
