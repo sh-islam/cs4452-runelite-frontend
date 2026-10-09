@@ -30,18 +30,34 @@
     <p class="plaque">Current version: <b id="version">…</b></p>
   </section>
 
-  <div class="card news">
+  <div class="card news" id="news">
     <h2>News</h2>
-    <!-- Add a new <article> at the top for each update: <time>, <h3>, and a <p> if there is more to say. -->
-    <article>
-      <time>2026-10-04</time>
-      <h3>v1.0 released</h3>
-    </article>
+    <!-- Every release shows here by itself, newest first, with its notes (the message given to release.ps1).
+         For anything else worth saying, add an <article> by hand: <time>, <h3>, and a <p> if there is more.
+         Hand-written ones and releases are put in date order together. -->
   </div>
 </main>
 <footer><div class="inner"><span>CS4452</span><span>A private project for friends. Not affiliated with Jagex or RuneLite.</span></div></footer>
 <script>
+// The news: every release from the server, with any hand-written <article>, newest first.
+async function showNews() {
+  const box = document.getElementById("news");
+  let releases = [];
+  try { releases = await api("/api/news"); } catch (e) {}
+  for (const r of releases) {
+    const article = document.createElement("article");
+    article.innerHTML = `<time>${escapeHtml(r.date)}</time><h3>v${escapeHtml(r.version)} released</h3>`
+      + (r.notes ? `<p>${escapeHtml(r.notes)}</p>` : "");
+    box.appendChild(article);
+  }
+  const articles = [...box.querySelectorAll("article")];
+  articles.sort((a, b) => (b.querySelector("time")?.textContent || "").localeCompare(a.querySelector("time")?.textContent || ""));
+  articles.forEach((a) => box.appendChild(a));
+  if (!articles.length) box.insertAdjacentHTML("beforeend", "<p class=dim>No news yet.</p>");
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+  showNews();
   try {
     const v = await api("/api/version");
     document.getElementById("version").textContent = v.version || "not published yet";
