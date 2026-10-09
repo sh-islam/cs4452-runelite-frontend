@@ -83,22 +83,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     const o = await api("/api/admin/overview", { kind: "admin" });
     document.getElementById("version").textContent = o.version || "none yet";
     document.getElementById("retention").textContent = o.retentionDays;
-    const friends = document.getElementById("friends");
-    friends.querySelectorAll("tr:not(:first-child)").forEach((r) => r.remove());
-    if (!o.friends.length) friends.insertAdjacentHTML("beforeend", "<tr><td colspan=5 class=dim>No friends yet.</td></tr>");
-    for (const f of o.friends) {
-      friends.insertAdjacentHTML("beforeend", `<tr><td>${escapeHtml(f.name)}</td><td>${f.disabled ? "disabled" : "active"}</td>
+    // Each table is replaced in one go: two refreshes running at once (sign-in and an add) each appended
+    // every row, and a friend showed twice.
+    const friendRows = o.friends.length ? o.friends.map((f) => `<tr><td>${escapeHtml(f.name)}</td><td>${f.disabled ? "disabled" : "active"}</td>
 <td>${f.installs}</td><td>${when(f.lastSeen)}</td><td>
 <button class="small" data-toggle="${escapeHtml(f.name)}">${f.disabled ? "Enable" : "Disable"}</button>
-<button class="small" data-password="${escapeHtml(f.name)}">New password</button></td></tr>`);
-    }
-    const installs = document.getElementById("installs");
-    installs.querySelectorAll("tr:not(:first-child)").forEach((r) => r.remove());
-    if (!o.installs.length) installs.insertAdjacentHTML("beforeend", "<tr><td colspan=4 class=dim>No installs have reported yet.</td></tr>");
-    for (const i of o.installs) {
-      installs.insertAdjacentHTML("beforeend", `<tr><td><a href="#" data-logs="${escapeHtml(i.installId)}">${escapeHtml(i.installId.slice(0, 8))}…</a></td>
-<td>${escapeHtml(i.name)}</td><td>${escapeHtml(i.version || "?")}</td><td>${when(i.lastSeen)}</td></tr>`);
-    }
+<button class="small" data-password="${escapeHtml(f.name)}">New password</button>
+<button class="small" data-remove="${escapeHtml(f.name)}">Remove</button></td></tr>`).join("")
+      : "<tr><td colspan=5 class=dim>No friends yet.</td></tr>";
+    document.getElementById("friends").innerHTML = "<tr><th>Name</th><th>State</th><th>Installs</th><th>Last seen</th><th></th></tr>" + friendRows;
+    const installRows = o.installs.length ? o.installs.map((i) => `<tr><td><a href="#" data-logs="${escapeHtml(i.installId)}">${escapeHtml(i.installId.slice(0, 8))}…</a></td>
+<td>${escapeHtml(i.name)}</td><td>${escapeHtml(i.version || "?")}</td><td>${when(i.lastSeen)}</td></tr>`).join("")
+      : "<tr><td colspan=4 class=dim>No installs have reported yet.</td></tr>";
+    document.getElementById("installs").innerHTML = "<tr><th>Install</th><th>Friend</th><th>Version</th><th>Last seen</th></tr>" + installRows;
   }
 
   async function showLogs() {
@@ -144,9 +141,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     catch (e) { notice(e.message); }
   });
   document.getElementById("friends").addEventListener("click", async (event) => {
-    const toggle = event.target.dataset.toggle, password = event.target.dataset.password;
+    const toggle = event.target.dataset.toggle, password = event.target.dataset.password, remove = event.target.dataset.remove;
     try {
       if (toggle) { await api("/api/admin/friends/toggle", { method: "POST", kind: "admin", body: { name: toggle } }); await overview(); }
+      if (remove && confirm(`Remove ${remove}? Their installer and updater stop working, and their logs go.`)) {
+        await api("/api/admin/friends/remove", { method: "POST", kind: "admin", body: { name: remove } }); notice(`Removed ${remove}.`); await overview(); }
       if (password) { const r = await api("/api/admin/friends/password", { method: "POST", kind: "admin", body: { name: password } });
         notice(`New password for ${r.name} (shown once): ${r.password}`); }
     } catch (e) { notice(e.message); }
