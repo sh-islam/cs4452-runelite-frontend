@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Report a problem · CS4452</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=Cinzel:wght@600;700;800&family=Pixelify+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="site.css">
+<script src="site.js" defer></script>
+</head>
+<body>
+<header><div class="inner">
+  <a class="brand" href="index.html">CS4452<small>for RuneLite</small></a>
+  <nav><a href="index.html">Home</a><a href="howto.html">How to use</a><a href="bots.html">Bots</a><a href="downloads.html">Downloads</a><a href="report.html">Report a problem</a></nav>
+</div></header>
+<main>
+  <div class="card">
+    <h1>Report a problem</h1>
+    <p>A bot got stuck or did something daft? Tell us which bot, roughly when, and what happened. The
+      <b>CS4452 Updater</b> has already sent what the bot was doing, so that's all we need.</p>
+    <p class="dim">Logs are kept 3 days, so report within 3 days of it happening.</p>
+  </div>
+
+  <div class="card stone signin" id="signin">
+    <h2>Sign in</h2>
+    <p>The same name and password as on Downloads.</p>
+    <form id="login">
+      <label>Name<input name="name" autocomplete="username" required></label>
+      <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+      <button>Sign in</button>
+      <p class="err" id="login-error"></p>
+    </form>
+  </div>
+
+  <div class="card stone hidden" id="report-card">
+    <h2>What went wrong</h2>
+    <form id="report">
+      <label>Which bot
+        <select name="bot" required>
+          <option value="">Pick one…</option>
+          <option>Agility</option><option>Combat</option><option>Firemaking</option><option>Fishing</option>
+          <option>Gemstone Crab</option><option>Hunter</option><option>Magic</option><option>Mahogany Homes</option>
+          <option>Planks</option><option>Processor</option><option>Tanning</option><option>Thieving</option>
+          <option>Werewolf Agility</option><option>Woodcutting</option><option>Bank Manager</option>
+          <option>Auto Login</option><option>Breaks</option><option>Something else</option>
+        </select>
+      </label>
+      <label>When it happened (roughly is fine)<input name="happened" type="datetime-local" required></label>
+      <label>What happened
+        <textarea name="description" rows="5" required
+          placeholder="What it was doing and what went wrong. e.g. It reached the bank and just stood there."></textarea>
+      </label>
+      <label class="check"><input type="checkbox" name="logsOn"> The CS4452 Updater is on (it sends the logs we need)</label>
+      <button class="primary">Send report</button>
+      <p class="err" id="report-error"></p>
+    </form>
+    <div id="sent" class="hidden">
+      <p id="sent-text"></p>
+      <p><button id="another">Report another</button></p>
+    </div>
+  </div>
+
+  <div class="card hidden" id="mine-card">
+    <h2>Your reports</h2>
+    <table id="mine"></table>
+    <p class="dim"><a href="#" id="signout">Sign out</a></p>
+  </div>
+</main>
+<footer><div class="inner"><span>CS4452</span><span>A private project for friends. Not affiliated with Jagex or RuneLite.</span></div></footer>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const signin = document.getElementById("signin");
+  const card = document.getElementById("report-card");
+  const mineCard = document.getElementById("mine-card");
+  const form = document.getElementById("report");
+  const sent = document.getElementById("sent");
+
+  // Now, to the minute, in this computer's own time: the default for "when".
+  const nowLocal = () => {
+    const d = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
+    return d.toISOString().slice(0, 16);
+  };
+
+  const showMine = async () => {
+    const mine = await api("/api/tickets", { kind: "friend" });
+    const table = document.getElementById("mine");
+    table.innerHTML = "<tr><th>#</th><th>Bot</th><th>When</th><th>What</th><th>State</th></tr>" + (mine.length
+      ? mine.map((t) => `<tr><td>${t.id}</td><td>${escapeHtml(t.bot)}</td><td>${when(t.happened)}</td>
+<td>${escapeHtml(t.description.length > 80 ? t.description.slice(0, 80) + "…" : t.description)}</td>
+<td>${t.status === "open" ? "Being looked at" : "Done"}</td></tr>`).join("")
+      : "<tr><td colspan=5 class=dim>None yet.</td></tr>");
+    mineCard.classList.remove("hidden");
+  };
+
+  const open = async () => {
+    await api("/api/me", { kind: "friend" });
+    signin.classList.add("hidden");
+    card.classList.remove("hidden");
+    form.happened.value = nowLocal();
+    await showMine();
+  };
+
+  if (session.get("friend")) {
+    try { await open(); } catch (e) {}
+  }
+
+  document.getElementById("login").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const f = new FormData(event.target);
+    document.getElementById("login-error").textContent = "";
+    try {
+      const r = await api("/api/login", { method: "POST", body: { name: f.get("name"), password: f.get("password") } });
+      session.set("friend", r.token);
+      await open();
+    } catch (e) {
+      document.getElementById("login-error").textContent = e.message;
+    }
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const error = document.getElementById("report-error");
+    error.textContent = "";
+    if (!form.logsOn.checked) {
+      error.textContent = "Turn the CS4452 Updater on, run the bot until it happens again, then send this. Without its logs we can't see what went wrong.";
+      return;
+    }
+    const happened = new Date(form.happened.value).getTime() / 1000;
+    try {
+      const r = await api("/api/tickets", { method: "POST", kind: "friend", body: {
+        bot: form.bot.value, happened, description: form.description.value, logsOn: true } });
+      document.getElementById("sent-text").textContent = r.logLines > 0
+        ? `Thanks, that's report #${r.id}. We have ${r.logLines} log lines from around then, which should be plenty.`
+        : `Thanks, that's report #${r.id}. We have no logs from within ${r.windowMinutes} minutes of then, though: check the CS4452 Updater is on, and that the time is right.`;
+      form.classList.add("hidden");
+      sent.classList.remove("hidden");
+      await showMine();
+    } catch (e) {
+      error.textContent = e.message;
+    }
+  });
+
+  document.getElementById("another").addEventListener("click", () => {
+    form.reset();
+    form.happened.value = nowLocal();
+    sent.classList.add("hidden");
+    form.classList.remove("hidden");
+  });
+
+  document.getElementById("signout").addEventListener("click", (event) => {
+    event.preventDefault();
+    session.clear("friend");
+    card.classList.add("hidden");
+    mineCard.classList.add("hidden");
+    signin.classList.remove("hidden");
+  });
+});
+</script>
+</body>
+</html>
