@@ -1,5 +1,6 @@
 # Opens the live site in a browser on GitHub's own machines -- not on the
-# tailnet -- and checks the Downloads page reaches the backend.
+# tailnet -- and checks the sign-in reaches the backend, and that nothing
+# behind it is handed out without signing in.
 name: check
 on:
   workflow_dispatch:
@@ -12,15 +13,20 @@ jobs:
       - run: |
           python - <<'PY'
           from playwright.sync_api import sync_playwright
+          BACKEND = "https://shad-server.elf-tarpon.ts.net/cs4452-api"
           with sync_playwright() as p:
               b = p.chromium.launch(); page = b.new_page()
               page.goto("https://sh-islam.github.io/cs4452-runelite-frontend/downloads.html")
-              page.fill("#login [name=name]", "nobody"); page.fill("#login [name=password]", "x")
-              page.click("#login button"); page.wait_for_timeout(4000)
-              err = page.text_content("#login-error")
-              print("downloads page says:", err)
+              page.wait_for_selector("#signin-form", state="visible")
+              print("old link lands on:", page.url)
+              page.fill("#signin-form [name=name]", "nobody"); page.fill("#signin-form [name=password]", "x")
+              page.click("#signin-form button"); page.wait_for_timeout(4000)
+              err = page.text_content("#signin-error")
+              print("sign-in says:", err)
               assert "do not match" in err, err
-              page.goto("https://sh-islam.github.io/cs4452-runelite-frontend/index.html"); page.wait_for_timeout(4000)
-              print("home version:", page.text_content("#version"))
+              for path in ("/api/site/home", "/api/site/images/keybinds.png", "/api/news", "/api/version"):
+                  status = page.request.get(BACKEND + path).status
+                  print(path, status)
+                  assert status == 401, (path, status)
               b.close()
           PY

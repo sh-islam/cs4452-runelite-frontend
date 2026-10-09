@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<title>CS4452</title>
+<script>
+// Every address but the sign-in page lands here, old links such as downloads.html
+// included: on to the sign-in page, and the same page once signed in.
+(() => {
+  const base = location.hostname.endsWith("github.io") ? "/" + location.pathname.split("/")[1] + "/" : "/";
+  let name = location.pathname.split("/").pop();
+  if (name.endsWith(".html")) name = name.slice(0, -5);
+  const pages = ["howto", "bots", "downloads", "report", "admin"];
+  location.replace(base + (pages.includes(name) ? "?" + name : ""));
+})();
+</script>
+</head>
+<body></body>
+</html>
