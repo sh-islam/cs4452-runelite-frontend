@@ -1,10 +1,6 @@
-// The website's one piece of logic. GitHub Pages holds only the sign-in page:
-// every page behind it, its images and the news come from the backend, to
-// someone signed in and no one else (the pages are in the backend's site/).
+// The website's one piece of logic: signing in, then showing the page asked for.
 //
-// BACKEND is the one address that has to match the server: where the backend
-// is reached from the internet (see the backend's CS4452_PUBLIC_URL). A copy
-// opened on this computer (localhost) talks to a backend on this computer.
+// BACKEND is where the server is reached; a copy opened on localhost uses one on this computer.
 const BACKEND = location.hostname === "localhost" ? "http://localhost:8080" : "https://shad-server.elf-tarpon.ts.net/cs4452-api";
 
 // The pages, by what follows the "?" in the address (./?howto); Home is plain ./
