@@ -591,6 +591,17 @@ img.ico {
 .card .slot img { margin: 0; border: 0; box-shadow: none; }
 .slot img.panel { width: 36px; }
 .slot.empty { background-image: none; opacity: .55; }
+/* Not in CS4452 Play yet: faded, with a small tag beside the name. */
+.bot.wip { opacity: .6; }
+.wip-tag {
+  font-family: var(--pixel);
+  font-size: 12px;
+  letter-spacing: .06em;
+  padding: 1px 5px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  color: var(--ink-red);
+}
 
 @media (max-width: 640px) {
   .bots { grid-template-columns: 1fr; }
