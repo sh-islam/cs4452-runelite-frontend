@@ -595,6 +595,17 @@ img.ico {
 .slot.empty { background-image: none; opacity: .55; }
 /* Not in CS4452 Play yet: faded, with a small tag beside the name. */
 .bot.wip { opacity: .6; }
+/* Released, with a word of caution: an amber tag, and its note under the card. */
+.beta-tag {
+  font-family: var(--pixel);
+  font-size: 12px;
+  letter-spacing: .06em;
+  padding: 1px 5px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  color: #b06a00;
+}
+.beta-note { color: #8a5300; font-style: italic; }
 .wip-tag {
   font-family: var(--pixel);
   font-size: 12px;
