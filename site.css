@@ -473,6 +473,8 @@ td, th { text-align: left; padding: 8px 10px; vertical-align: top; }
   color: var(--ink);
 }
 .news p { width: 100%; margin: 2px 0 0; font-family: var(--read); font-size: 17px; }
+.news ul { width: 100%; margin: 4px 0 0; padding-left: 22px; font-family: var(--read); font-size: 17px; }
+.news li { margin: 2px 0; }
 
 /* -- the admin's log ------------------------------------------------------------------------ */
 
